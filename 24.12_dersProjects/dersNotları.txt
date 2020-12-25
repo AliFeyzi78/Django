@@ -1,0 +1,51 @@
+- .gitignore dosyası ekledik (github'a pushladığımızda myenv'i göndermek istemiyorum)
+
+-  1. Enviroment (myenv) -> Proje (clarusway) -> Application (fscohort)
+            INSTALLED_APPS = [
+            'django.contrib.admin',
+            'django.contrib.auth',
+            'django.contrib.contenttypes',
+            'django.contrib.sessions',
+            'django.contrib.messages',
+            'django.contrib.staticfiles',
+            'fscohort',
+            ]
+    
+Application (fscohort) için =>
+     -> view 
+            def home_view(request):
+        return HttpResponse("Hello, this is fscohort Homepage!!")
+     
+     -> url   (**direk "home_view" i import ediyorum.)
+            from fscohort.views import home_view
+
+            urlpatterns = [
+                path('admin/', admin.site.urls),
+                path("", home_view)  ***buraya direk url yazıyoruz 
+            ]
+    
+-------------------------------------------------------
+kullanıcı bizden istekte bulunduğunda;
+ - senden http://127.0.0.1:8000/ sayfasını istiyorum!
+ - bu istek ilk önce 
+    Projemizin (clarusway) -> settings -> ROOT_URLCONF = 'clarusway.urls' olarak tanımlanan "urls.py"e gidiyoruz
+    clarusway -> urls.py -> 
+        from fscohort.views import home_view
+        urlpatterns = [
+            path('admin/', admin.site.urls),
+            path("", home_view) ----> ***boş ise home_view'e yönlendir diyorum
+        ]
+    App(fscohort) --> fscohort.views'da ne var:
+        def home_view(request):
+	        return HttpResponse("Hello, this is fscohort Homepage!!")
+-------------------------------------------------
+*** böyle birçok app için çok fazla url oluşturacağımızdan ve bu url'ler karışacağından;
+'include' u import ederek kullanıyoruz;
+*** yani bizi fscohort içinde yeni oluşturduğumuz urls.py dosyasına yönlendiriyoruz
+    from django.urls import path, include
+    urlpatterns = [
+            path('admin/', admin.site.urls),
+            path("", include("fscohort.urls"))    
+
+------------------------------------------------------
+
