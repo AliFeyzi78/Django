@@ -48,4 +48,55 @@ kullanıcı bizden istekte bulunduğunda;
             path("", include("fscohort.urls"))    
 
 ------------------------------------------------------
+******************************************************
+
+MODEL OLUŞTURALIM; (database table'larımız)
+
+#>>> fscohort/models.py
+
+ - fscohort app imiz için bir model (tablo) oluşturacağız;
+ - model field'larını otomatik oluşturulmuş django dokumanlarından bakabilirim.
+ 
+ -> class Students(models.Model): *** class yapısıyla oluşturacağız
+        first_name = models.CharField(max_length=50)
+        last_name=models.CharField(max_length=50)
+        number=models.IntegerField()   
+- django' ya ben bir model oluşturdum diye deklere etmem gerekiyor; 
+#>>> Terminal'den
+-> py manage.py makemigrations
+        Migrations for 'fscohort':
+        fscohort\migrations\0001_initial.py
+            - Create model Students  ****bu mesaj geliyor
+-> py manage.py migrate   ***otomatik oluşturduğumuz alanları database'e atmak için 
+-> py manage.py createsuperuser ***admin panelini oluşturacağız
+......
+-> http://127.0.0.1:8000/admin/ ile admin paneline ulaşıyoruz
+
+***oluşturduğumuz model'i admin panelinde göstermek için;
+#>>>> fscohort/admin.py
+-> from .models import Students
+
+-> admin.site.register(Students)
+
+-------------------- 
+??? database'e kaydettğimiz her bir elemamın panelde nasıl görünmesini istiyorsak; 
+#>>>> fscohort/models.py
+  ->def __str__(self):
+        return self.first_name  *** panelde ismini gösterilir.
+
+*** tablo (model)'de yaptığımız her değişiklikten sonra django'ya bilgi veriyoruz.
+ex: 
+    first_name yarine sir_name yaptık.
+    -> py manage.py makemigrations (y/n)
+    -> py manage.py migrate 
+    komutlarını vermemiz gerekir
+
+****************************************************************************
+- database'de Query yapacağızzzz; 
+  database'den veri alıp template'e göndereceğiz;
+
+
+
+
+
 
