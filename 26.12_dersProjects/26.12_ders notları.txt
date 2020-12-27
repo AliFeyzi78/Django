@@ -1,0 +1,69 @@
+******* how to make Template ********
+
+#fscohort/views;
+def home_view(request):
+    my_context = {           ***view'den Template'e veri gönderebilmemiz için bir tane dict. olması gerekir.
+        'title': 'clarusway',
+        'dict_1': {'djang': 'best framework'},
+        'my_list': [2, 3, 4, 5]
+    }
+    return render(request, "home.html", my_context)  
+
+=> bu kod bloğundan sonra browser /home'a gittiğimizde bize Error verecektir. Çünkü biz home'u herhangi bir HTML sayfasına yönlendirmedik.
+  ne yapmamız gerekiyor.
+  *** şimdi "home.html"oluşturuyorum. 
+
+
+#clarusway/settings;
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,    ====> *True olması oluşturduğumuz APP (fscohort) içerisinde bir Template olması gerekir.  
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+#fscohort
+-> yeni "templates" klasörü oluşturuyorum
+
+#fscohort/temlates
+-> yeni "fscohort" klasörü oluşturuyorum. * App'in ismi ile aynı olması gerekiyor.
+
+#fscohort/temlates/fscohort
+-> "home.html" dosyası oluşturuyorum.
+
+#fscohort/views; 
+buradaki return kodunu yani "home.html" in konumunu düzeltiyorum. klasör ismi ekliyorum.  
+ 
+ ->return render(request, "fscohort/home.html", my_context)
+
+artık home.html'ye yazdıklarımız browser'dan görebileceğizdict.
+
+#fscohort/home.html
+<body>
+    <h1>Hello, this is home page!!</h1>
+    {{ title|safe }} <br> <hr>   *** "|safe" yazarsak bize gelen veriye güvendiğimizi gösterir. yazmamıza gerek yok.   
+    {{ dict_1 }} <br><hr>
+    {{ my_list }} <br><hr><hr>
+    {% for i in my_list %}
+        {% if i == 3 %}
+        <p> Bu sayı 3 e eşittirdict. </p>
+        {% else %}
+    {{ i }} <br>
+    {% endif %}     ***conditions ları "end..." ile bitirmemiz gerekiyor.
+    {% endfor %}
+</body>
+****hazır django templates filters https://docs.djangoproject.com/en/3.1/ref/templates/builtins/ adresinde bulabiliriz.
+=> browser'dan h1 tag'ı ve #fscohort/views'da yazdığımız dict.nin "value" larını görebileceğiz.
+normalde bu veriyi database'den çekeceğiz. 
+
+
+
