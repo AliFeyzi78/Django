@@ -95,6 +95,29 @@ ex:
 - database'de Query yapacağızzzz; 
   database'den veri alıp template'e göndereceğiz;
 
+#>>> Terminal'den
+
+-> py manage.py shell
+>>> from fscohort.models import Student  =>Student class'ını çağırdık
+>>> s1 = Student(first_name="veli", last_name="asdf",number=12234) => yeni bir instance oluşturduk
+>>> s1.save() => database'e kaydediyoruz (kaydettğimiz instance'ı browserdan kontrol edebiliriz)
+>>> all_s= Student.objects.all() bütün veriyi bir değişkene tanımlıyoruz ***bütün sorgularda "objects" kullanıyoruz
+>>> s4= Student.objects.get(id=2)  id'den sorgulayıp değişkene atıyoruz. değişkene tanımlamadan da çağırabiliriz
+>>> Student.objects.filter(number=2) numarası "2" olanları gösterilir
+>>> Student.objects.exclude(first_name="veli")  adı veli olmayanları getirir
+>>> s3 = Student.objects.create(first_name="dermani", last_name="ssssssf",number=1122224) **save metodunu kullanmadan ekleme yapmak için
+**** "get" tek obje döner "filter" ile çok obje döner
+>>> f1 = Student.objects.filter(first_name__startswith="C")  ismi C ile başlayanları getirir. çift "__" kullanıyoruz
+***dokumanlarda "field-lookups" diye aratırsanız, bolca bulursunuz.
+>>> f1 = Student.objects.filter(first_name__contains="a") mesala yanii
+
+
+
+
+
+
+
+
 
 
 
