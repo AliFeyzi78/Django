@@ -65,5 +65,59 @@ artık home.html'ye yazdıklarımız browser'dan görebileceğizdict.
 => browser'dan h1 tag'ı ve #fscohort/views'da yazdığımız dict.nin "value" larını görebileceğiz.
 normalde bu veriyi database'den çekeceğiz. 
 
+---------------------------------------------------------------------------------------------
+*********************************************************************************************
 
+****** FORMS ************
+
+#fscohort 
+- "forms.py" isminde yeni bir dosya oluşturuyoruz. 
+
+***not: DBase'den veri çekerken GET metodu, DBase'deki veriyi değiştireceksek POST metodu kullanıyoruz
+
+#fscohort/forms.py
+->from django import forms
+
+class StudentForm(forms.Form):
+    first_name = forms.CharField(max_length=50, label="Name")
+    last_name = forms.CharField(max_length=50, label="Surname")
+    number = forms.IntegerField()
+
+* Formu oluşturduk. Şimdi bu formu Template'te göndermek istiyorum.
+1. fscohort/view -> formu import edip dict.e bu formu eklemem gerekiyor.  
+2. home.html de dict.e verdiğimiz değişken ismini vazıyoruz.
+
+#> fscohort/view
+    -> from .forms import StudentForm
+
+    def home_view(request):
+    form = StudentForm() *burayı ekliyoruz
+    my_context = {
+        'title': 'clarusway',
+        'dict_1': {'djang': 'best framework'},
+        'my_list': [2, 3, 4, 5],
+        'form': form *bir de burayı
+    }
+#> fscohort/home.html
+    <body>
+    <form action=".",method="GET">
+        {{ form }}
+    </form>
+    ...
+
+***Model Forms nasıl yapıyoruz??
+#> fscohort/forms içerisinde 
+-> from .models import Student
+
+-> class StudentForm(forms.ModelForm):
+    first_name = forms.CharField(label="Name ")
+
+    class Meta:
+        model = Student
+        fields = ("first_name", "last_name") **model'e ait bütün fieldları kullanacaksam "__all__" yazıyorum.
+
+     {% comment %} def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["first_name"].label = "MyName" {% endcomment %} label tanımlamanın diğer bir yöntemi de budur.
 

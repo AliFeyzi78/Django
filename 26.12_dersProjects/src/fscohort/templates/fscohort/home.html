@@ -6,8 +6,11 @@
     <title>Document</title>
 </head>
 <body>
+    <form action=".",method="GET">
+       {{ form }}
+    </form>
     <h1>Hello, this is home page!!</h1>
-    {{ title|safe }} <br> <hr>  
+    {{ title }} <br> <hr>  
     {{ dict_1 }} <br><hr>
     {{ my_list }} <br><hr><hr>
     {% for i in my_list %}
