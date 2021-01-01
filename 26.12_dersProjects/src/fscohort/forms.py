@@ -15,7 +15,7 @@ class StudentForm(forms.ModelForm):
         model = Student
         fields = "__all__"  # ("first_name", "last_name")
 
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    #     self.fields["first_name"].label = "MyName"
+        self.fields["first_name"].label = "MyName"

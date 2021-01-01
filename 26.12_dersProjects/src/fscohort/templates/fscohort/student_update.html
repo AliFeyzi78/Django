@@ -1,0 +1,18 @@
+{% extends 'fscohort/base.html' %}
+
+{% block title %}
+  Update Student  
+{% endblock %}
+    
+{% block content %}
+    <h2>Update Student</h2>
+    <a href="{% url 'home' %}"><button>Home</button></a><br>  
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Update">        
+    </form><br>
+    <a href="{% url 'list' %}"><button> Cancel </button></a>
+    
+{% endblock %}
+    

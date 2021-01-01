@@ -121,3 +121,317 @@ class StudentForm(forms.Form):
 
         self.fields["first_name"].label = "MyName" {% endcomment %} label tanımlamanın diğer bir yöntemi de budur.
 
+*************************************************************
+------------------------------------------------------------
+*************************************************************
+
+***BersPractice*** Teplate üzerinde inherit nasıl yapılır.
+
+#>> fscohort/temlates/fscohort içine "base.html" oluşturuyoruz
+
+#>> fscohort/temlates/fscohort/base.html  * buraya ana html yapısını oluşturuyorum
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>fscohort</title>
+    </head>
+    <body>
+    
+         {% block content %}  *
+        
+        {% endblock %}
+        
+    </body>
+</html>
+
+#>> fscohort/temlates/fscohort/home.html   *buradaki html yapısını temizleyip. base.html'den inherit ediyorum
+
+{% extends 'fscohort/base.html' %}      * nereden inherit
+{% block content %}                     * block lar arasında ne koyacağım... artık home.html'e sadece tek satır ile bütün html sayfasını Template'te görüntüleyebiliyorum. 
+<h1>Hello, this is home page!!</h1>       
+{% endblock %}
+
+
+
+
+
+---- DBase veri ÇEKME, Template'de LİSTELEME, DBase VERİ EKLEME, DBase VERİ GÜNCELLEME, DELETE-------------
+
+                *** MANUPILATION ***
+
+1. yeni bir view (Template) oluşturuyoruz;
+
+#>> fscohort/views
+from .models import Student 
+
+def student_list(request):
+    student = Student.objects.all() * Student tablosunun tamamını çağırıyoruz
+    context = {                     * Template'de gösterebilmek için dict. oluşturuyorum. 
+        "student": students
+    }
+    return render(request, "fscohort/student_list.html", context)   * fscohort içine yeni bir html dosyası oluşturuyorum.
+
+2. DBase'den veri alma;
+#>> fscohort/student_list.html
+
+{% extends 'fscohort/base.html' %}
+
+{% block content %}
+    <ul>
+        {% for student in students %}   **.views dosyasında yukarıda Student tablosunu student değişkenine atamıştık.
+            <li> {{ student.number }} => {{ student }} {{ student.last_name }}</li>  **an itibariyle DBase'den veri çekmiş bulunuyoruz.           
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+3. DBase'de veri creat edelim (oluşturalım); 
+model'e yeni veri girebilmek için kullanıcıya bir form göstermem gerekiyor. bu forma veriler girilecek(first_name,....)   
+#>> fscohort/views.py;
+-> from .forms import StudentForm
+-> def student_add(request):
+    form = StudentForm()
+    if request.method == "POST":
+        form = StudentForm(request.POST)
+    context = {             
+        'form': form
+    }
+    return render(request, "fscohort/student_add.html", context)
+- view oluşturduktan sonra hemen url'i bağlamam GEREKİYOR**
+#>> fscohort/urls.py
+-> from .views import home_view, student_list, student_add
+
+-> urlpatterns = [
+    path("", home_view),
+    path("list/", student_list)
+    path("add/", student_add)
+
+#>>fscohort/templates/fscohort 
+   -içerisine "student_add.html" oluşturalım.
+#>> fscohort/templates/fscohort/student_add.html
+->{% extends 'fscohort/base.html' %}
+
+
+{% block title %}
+  Add Student  
+{% endblock %}
+    
+
+
+{% block content %}
+    <h2>Add Student</h2>
+    <form action="" method="POST">   **database'e veri ekliyeceğim için method POST olacak!!
+        {% csrf_token %}  ***formun kötü niyetli kişilerce yönlendirilmiş başka bir sayfadan gönderilip gönderilmedişini kontrol ediyor.
+        {{ form.as_p }}
+        <input type="submit" value="ekle">
+    </form>
+
+{% endblock %}
+
+**** Artık DBase'e Template'ten veri gönderebiliyoruz. gönderdiğimiz veriyi kaydetmek için;
+#>> fscohort/views.py 
+- daha önce yazdığımız fonk.a form doğruysa save etmesini istiyoruz
+-> 
+def student_add(request):
+    form = StudentForm()
+    if request.method == "POST":
+        print(request.POST)
+        form = StudentForm(request.POST)
+        if form.is_valid():     ***buraya ekleme yaptık
+            form.save()
+    context = {
+        'form': form
+    }
+    return render(request, "fscohort/student_add.html", context) 
+
+---form'u database'e gönderdikten sonra, aynı formun tekrar gönderlmesini engellemek için redirect yapmamız gerekiyor.
+#>> fscohort/views.py
+-> from django.shortcuts import render, redirect  *redirect ekliyoruz
+
+-> def student_add(request):
+    form = StudentForm()
+    if request.method == "POST":
+        print(request.POST)
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("home")    ****buraya redirect("url.py içerisindeki url'lere verdiğimiz 'name'i ekliyoruz")
+    context = {
+        'form': form
+    }
+    return render(request, "fscohort/student_add.html", context)
+
+
+--- list template'de listelenen herhangi bir elemana tıklayınca tablodaki(model) diğer detayları görmek istiyoruz;
+#>> fscohort/views.py
+bir fonksiyon ile hemen görevi oluşturuyoruz
+-> def student_detail(request, id):
+     student = Student.objects.get(id=id)  **get sadece bir elemen çağırdığımızda
+     context = {                            *** seçtiğimiz student'i sayfaya göndermek için dict. oluşturuyoruz
+         'student':student 
+     }
+     return render(request, "fscohort/student_detail.html", context)
+#>> fscohort/urls.py 
+-- tabi ki url'i tanımlıyoruz;
+-> from .views import home_view, student_list, student_add, student_detail
+
+-> urlpatterns = [
+    path("", home_view, name="home"),
+    path("list/", student_list, name="list"),
+    path("add/", student_add, name="add"),
+    path("<int:id>", student_detail, name="detail") ***burayı ekledik <int:id> => tıkladığımız id gözükecek
+
+#>> fscohort/templates/fscohort 
+- student_detail.html doayasını oluşturuyoruz
+
+#>> fscohort/student_detail.html
+-> {% extends 'fscohort/base.html' %}
+
+
+{% block title %}
+    Student Detail
+{% endblock %}
+    
+
+{% block content %}
+   <h1>Student Detail</h1> 
+    {{ student.number }} => {{ student.first_name }} {{ student.last_name }}    
+{% endblock %}
+
+-- student_list.html sayfasındaki listelenen objelere tıklama event'i ekleyeceğiz;
+
+#>> fscohort/student_list.html
+
+{% extends 'fscohort/base.html' %}
+
+
+{% block content %}
+<ul>
+    {% for student in students %}
+    <a href="{% url 'detail' student.id %}">  ***liste elemenlarına link veriyorum. 'detail' isimli url'den tıkladığım student'in id sine ait detayı gösterir. 
+        <li> {{ student }} </li>            
+    </a>
+    {% endfor %}
+</ul>
+    
+{% endblock %}
+
+-------- student_detail sayfasından bir eleman'ı silmeyi öğrenelim;--------iki button koyarak yapalım
+#>> fscohort/student_detail.html
+
+{% block content %}
+    <h1>Student Detail</h1> 
+    {{ student.number }} => {{ student.first_name }} {{ student.last_name }}   
+    <a href="{% url 'delete' student.id %}">    *** 'delete' isimli view'dan ilgili id silinmesini istiyoruz
+        <button>Delete</button>
+    </a>
+{% endblock %}
+
+#>> fscohort/views.py
+-> from django.shortcuts import render, redirect, get_object_or_404
+
+-> def student_delete(request, id):
+        # student = get_object_or_404(Student, id=id)
+        student = Student.objects.get(id=id)
+        if request.method == "POST":
+            student.delete()
+            return redirect("list")
+        return render(request, "fscohort/student_delete.html")
+
+#>> fscohort/urls.py
+-> from .views import home_view, student_list, student_add, student_detail, student_delete
+
+-> urlpatterns = [
+    path("", home_view, name="home"),
+    path("list/", student_list, name="list"),
+    path("add/", student_add, name="add"),
+    path("<int:id>", student_detail, name="detail")
+    path("<int:id>/delete", student_delete, name="delete") ***ekledik
+    #path("about", views.about)
+]
+
+#>> fscohort/temlates/fscohort  
+- student_delete.html dosyasını oluşturalım,
+
+#>> fscohort/student_delete.html
+-> {% extends 'fscohort/base.html' %}
+
+{% block content %}
+<form action="" method="POST">
+    Are You Sure?
+    {% csrf_token %}    
+    <input type="submit" value="Yes">
+    <a href="{% url 'list' %}">NO</a>
+</form>
+    
+{% endblock %}
+
+
+--------HOME PAGE'e "ADD ve LIST" isimli iki button ekleyelim ve bunlara link verelim---
+#>>fscohort/home.html
+->  {% block content %}
+    <h1>Hello, this is home page!!</h1>
+    <a href="{% url 'add' %}"><button>Add Student</button></a>     ***buraya ekledik. name'i 'add' olan   
+    <a href="{% url 'list' %}"><button>Student List</button></a>
+    {% endblock %}
+
+-------- Şimdi bir eleman'ı UPDATE etmeyi öğrenelim;--------
+
+#>>fscohort/views.py
+
+->def student_update(request, id):
+    student = Student.objects.get(id=id)
+    form = StudentForm(instance=student)
+    if request.method == "POST":
+        form = StudentForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            return redirect("list")
+    context = {
+        'student': student,
+        'form': form
+    }
+    return render(request, "fscohort/student_update.html", context)
+
+#>>fscohort/urls.py
+
+-> from .views import ......, student_update
+->urlpatterns = [
+    path("", home_view, name="home"),
+    .....
+    path("<int:id>/update", student_update, name="update"),
+ ]
+
+#>>fscohort/temlates/fscohort
+- student_update.html dosyasını oluşturalım
+
+#>>fscohort/student_update.html
+->{% extends 'fscohort/base.html' %}
+
+{% block title %}
+  Update Student  
+{% endblock %}
+    
+{% block content %}
+    <h2>Update Student</h2>
+    <a href="{% url 'home' %}"><button>Home</button></a><br>  
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Update">        
+    </form><br>
+    <a href="{% url 'list' %}"><button> Cancel </button></a>
+    
+{% endblock %}
+    
+#>>fscohort/student_delete.html
+-buraya "update" button ekliyoruz
+....
+<a href="{% url 'update' student.id %}">
+        <button>Update</button>
+</a>
+
+***şimdi list'den tıkladığım student'in verilerini update sayfasında (template) görebileceğiz. Yani student'i "GET" yaptım.
+***student'i güncelleyip "POST" lamam gerekiyor.
+

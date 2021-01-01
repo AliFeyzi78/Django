@@ -1,24 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <form action=".",method="GET">
-       {{ form }}
-    </form>
-    <h1>Hello, this is home page!!</h1>
-    {{ title }} <br> <hr>  
-    {{ dict_1 }} <br><hr>
-    {{ my_list }} <br><hr><hr>
-    {% for i in my_list %}
-        {% if i == 3 %}
-        Bu sayı 3 e eşittir. <br>
-        {% else %}
-    {{ i }} <br>
-    {% endif %}
-    {% endfor %}
-</body>
-</html>
+{% extends 'fscohort/base.html' %} 
+
+{% block title %}
+    home page
+{% endblock %}
+
+{% block content %}
+<h1>Hello, this is home page!!</h1>
+<a href="{% url 'add' %}"><button>Add Student</button></a>
+<a href="{% url 'list' %}"><button>Student List</button></a>        
+{% endblock %}
+
