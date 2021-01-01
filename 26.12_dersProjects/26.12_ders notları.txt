@@ -377,6 +377,8 @@ bir fonksiyon ile hemen görevi oluşturuyoruz
     {% endblock %}
 
 -------- Şimdi bir eleman'ı UPDATE etmeyi öğrenelim;--------
+***şimdi list'den tıkladığım student'in verilerini update sayfasında (template) görebileceğiz. Yani student'i "GET" yaptım.
+***student'i güncelleyip "POST" lamam gerekiyor.
 
 #>>fscohort/views.py
 
@@ -432,6 +434,12 @@ bir fonksiyon ile hemen görevi oluşturuyoruz
         <button>Update</button>
 </a>
 
-***şimdi list'den tıkladığım student'in verilerini update sayfasında (template) görebileceğiz. Yani student'i "GET" yaptım.
-***student'i güncelleyip "POST" lamam gerekiyor.
+
+
+***NOT
+github'da indirdiğimiz projeyi nasıl kullanacağız:
+
+1. py -m venv ......  (kendi virtual env. oluşturuyoruz)
+2. .\......\Scripts\activate (aktive ediyoruz)
+3. pip install -r.\requirements.txt (requirements.txt deki bütün paketleri kuracak.)
 
