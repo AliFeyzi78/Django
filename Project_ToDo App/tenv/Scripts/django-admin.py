@@ -1,4 +1,4 @@
-#!c:\users\a\desktop\clarusway\02_fullstack\09_django\dersprojects\todo app\tenv\scripts\python.exe
+#!c:\users\a\desktop\clarusway\02_fullstack\09_django\dersprojects\project_todo app\tenv\scripts\python.exe
 # When the django-admin.py deprecation ends, remove this script.
 import warnings
 

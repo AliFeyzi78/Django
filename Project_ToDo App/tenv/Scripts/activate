@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\a\Desktop\ClarusWay\02_FullStack\09_Django\dersProjects\ToDo App\tenv"
+VIRTUAL_ENV="C:\Users\a\Desktop\ClarusWay\02_FullStack\09_Django\dersProjects\Project_ToDo App\tenv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
